@@ -48,9 +48,13 @@ app.post("/alarm", async (req, res) => {
   try {
 
     await transporter.sendMail({
+
       from: "vartik.martin@gmail.com",
+
       to: "skuskaalarmy@gmail.com",
+
       subject: "🚨 ALARM",
+
       text: "PIR vstup narušený!"
     });
 
@@ -66,7 +70,7 @@ app.post("/alarm", async (req, res) => {
   }
 });
 
-// 🔴 SERVIS
+// 🔴 SERVIS + HLIADKY
 app.post("/service", async (req, res) => {
 
   console.log("🛠️ SERVIS PRIŠIEL");
@@ -74,23 +78,30 @@ app.post("/service", async (req, res) => {
   try {
 
     let mailText = "";
+    let mailSubject = "";
 
     // 🚓 HLIADKY ODVOLAŤ
     if (req.body.service === "Hliadky odvolané") {
 
-      mailText = "Dobrý deň SRP, hliadky prosím odvolať.";
+      mailSubject = "🚓 HLIADKY ODVOLANÉ";
 
+      mailText =
+          "Dobrý deň SRP, hliadky prosím odvolať.";
     }
 
     // 🚓 HLIADKY POTVRDIŤ
     else if (req.body.service === "Hliadky potvrdené") {
 
-      mailText = "Dobrý deň SRP, hliadky týmto potvrdzujem.";
+      mailSubject = "🚓 HLIADKY POTVRDENÉ";
 
+      mailText =
+          "Dobrý deň SRP, hliadky týmto potvrdzujem.";
     }
 
     // 🔧 KLASICKÝ SERVIS
     else {
+
+      mailSubject = "🛠️ SERVIS";
 
       mailText =
           `Dobrý deň SRP, žiadam o servis: ${req.body.service}`;
@@ -102,7 +113,7 @@ app.post("/service", async (req, res) => {
 
       to: "skuskaalarmy@gmail.com",
 
-      subject: "🛠️ SERVIS",
+      subject: mailSubject,
 
       text: mailText
     });
