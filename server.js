@@ -73,11 +73,38 @@ app.post("/service", async (req, res) => {
 
   try {
 
+    let mailText = "";
+
+    // 🚓 HLIADKY ODVOLAŤ
+    if (req.body.service === "Hliadky odvolané") {
+
+      mailText = "Dobrý deň SRP, hliadky prosím odvolať.";
+
+    }
+
+    // 🚓 HLIADKY POTVRDIŤ
+    else if (req.body.service === "Hliadky potvrdené") {
+
+      mailText = "Dobrý deň SRP, hliadky týmto potvrdzujem.";
+
+    }
+
+    // 🔧 KLASICKÝ SERVIS
+    else {
+
+      mailText =
+          `Dobrý deň SRP, žiadam o servis: ${req.body.service}`;
+    }
+
     await transporter.sendMail({
+
       from: "vartik.martin@gmail.com",
+
       to: "skuskaalarmy@gmail.com",
+
       subject: "🛠️ SERVIS",
-      text: `Dobrý deň, na objekt ${req.body.user} žiadam o: ${req.body.service}`
+
+      text: mailText
     });
 
     console.log("✅ SERVIS MAIL ODOSLANÝ");
