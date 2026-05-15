@@ -2,7 +2,20 @@ const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./pco-alarmy-firebase-adminsdk-fbsvc-32ed50e6fe.json");
+
 const app = express();
+
+// 🔥 FIREBASE
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+// 🔥 FIREBASE TOKEN
+const firebaseToken =
+"fb2NvTPhQp6msOTHQ-bAyB:APA91bE00dz35hYyn87CAefEe-7IN3C3qjaBntgHTAUF_YXeIRk60fRTcX6OceZbmRiVx-5VQwFI9pbUwrjeN-BFd2a6XSfpJOXueVKhTw5cL3QZU4ntovs";
 
 // 🔥 Middleware
 app.use(cors());
@@ -40,6 +53,33 @@ app.get("/", (req, res) => {
   res.send("SERVER FUNGUJE");
 });
 
+// 🔥 PUSH TEST
+app.get("/push-test", async (req, res) => {
+
+  try {
+
+    await admin.messaging().send({
+
+      token: firebaseToken,
+
+      notification: {
+        title: "🚨 TEST ALARM",
+        body: "Push notifikácia funguje"
+      }
+    });
+
+    console.log("✅ PUSH ODOSLANÝ");
+
+    res.send("PUSH OK");
+
+  } catch (error) {
+
+    console.error("❌ PUSH CHYBA:", error);
+
+    res.status(500).send("PUSH ERROR");
+  }
+});
+
 // 🔴 ALARM
 app.post("/alarm", async (req, res) => {
 
@@ -47,6 +87,18 @@ app.post("/alarm", async (req, res) => {
 
   try {
 
+    // 🔥 PUSH NOTIFIKÁCIA
+    await admin.messaging().send({
+
+      token: firebaseToken,
+
+      notification: {
+        title: "🚨 ALARM",
+        body: "PIR vstup narušený!"
+      }
+    });
+
+    // 🔥 EMAIL
     await transporter.sendMail({
 
       from: "vartik.martin@gmail.com",
@@ -58,13 +110,13 @@ app.post("/alarm", async (req, res) => {
       text: "PIR vstup narušený!"
     });
 
-    console.log("✅ MAIL ODOSLANÝ");
+    console.log("✅ MAIL AJ PUSH ODOSLANÝ");
 
     res.send("OK");
 
   } catch (error) {
 
-    console.error("❌ CHYBA MAILU:", error);
+    console.error("❌ CHYBA ALARMU:", error);
 
     res.status(500).send("Chyba");
   }
