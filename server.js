@@ -6,12 +6,11 @@ const admin = require("firebase-admin");
 
 const serviceAccount = require("./pco-alarmy-firebase-adminsdk-fbsvc-32ed50e6fe.json");
 
-const app = express();
-
-// 🔥 FIREBASE
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
+const app = express();
 
 // 🔥 FIREBASE TOKEN
 const firebaseToken =
@@ -87,7 +86,7 @@ app.post("/alarm", async (req, res) => {
 
   try {
 
-    // 🔥 PUSH NOTIFIKÁCIA
+    // 🔥 PUSH
     await admin.messaging().send({
 
       token: firebaseToken,
@@ -132,7 +131,6 @@ app.post("/service", async (req, res) => {
     let mailText = "";
     let mailSubject = "";
 
-    // 🚓 HLIADKY ODVOLAŤ
     if (req.body.service === "Hliadky odvolané") {
 
       mailSubject = "🚓 HLIADKY ODVOLANÉ";
@@ -141,7 +139,6 @@ app.post("/service", async (req, res) => {
           "Dobrý deň SRP, hliadky prosím odvolať.";
     }
 
-    // 🚓 HLIADKY POTVRDIŤ
     else if (req.body.service === "Hliadky potvrdené") {
 
       mailSubject = "🚓 HLIADKY POTVRDENÉ";
@@ -150,7 +147,6 @@ app.post("/service", async (req, res) => {
           "Dobrý deň SRP, hliadky týmto potvrdzujem.";
     }
 
-    // 🔧 KLASICKÝ SERVIS
     else {
 
       mailSubject = "🛠️ SERVIS";
