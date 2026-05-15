@@ -14,7 +14,7 @@ const app = express();
 
 // 🔥 FIREBASE TOKEN
 const firebaseToken =
-"dMkCJ5sZTp-fwcxRBMss84:APA91bFIMF7feYVD1dnEpQkBrG3Mr-8Y-UB9exuO8sEJhzHU62arHUM5wXki4kRi8AHx70nVCyJPuWquvTsefp_qBz6U6EIldd8hrgzObkC1Z1byLQW171w";
+"e5_EUifxQYWazxtBGQL4Ue:APA91bG2OUBlFEBCOsB61RSHMarF8Tie4Jq2BK5Ezu_x0iSZfkMJc8F_dZ2MO4be8rjbBgBmrkKw4oG9knZN3jLY2A_DyTh2-nX-tLO_jlZgMLLaqFe-BT";
 
 // 🔥 Middleware
 app.use(cors());
