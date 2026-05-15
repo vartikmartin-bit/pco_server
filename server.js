@@ -14,7 +14,7 @@ const app = express();
 
 // 🔥 FIREBASE TOKEN
 const firebaseToken =
-"fdrcLLbeRPidktih1WLrPh:APA91bFYv1fbWEhOnj-WPICs35_9QRnsu5IAQygwrtmBroxkrzQPm2u5fTvraK5qSsNt2Ad32dCXzRQEVn-0uAao4gf1xh1l4fdwlaSsq9vlajIFIXlsdho";
+"dMkCJ5sZTp-fwcxRBMss84:APA91bFIMF7feYVD1dnEpQkBrG3Mr-8Y-UB9exuO8sEJhzHU62arHUM5wXki4kRi8AHx70nVCyJPuWquvTsefp_qBz6U6EIldd8hrgzObkC1Z1byLQW171w";
 
 // 🔥 Middleware
 app.use(cors());
@@ -116,66 +116,6 @@ app.post("/alarm", async (req, res) => {
   } catch (error) {
 
     console.error("❌ CHYBA ALARMU:", error);
-
-    res.status(500).send("Chyba");
-  }
-});
-
-// 🔴 SERVIS + HLIADKY
-app.post("/service", async (req, res) => {
-
-  console.log("🛠️ SERVIS PRIŠIEL");
-
-  try {
-
-    let mailText = "";
-    let mailSubject = "";
-
-    // 🚓 HLIADKY ODVOLAŤ
-    if (req.body.service === "Hliadky odvolané") {
-
-      mailSubject = "🚓 HLIADKY ODVOLANÉ";
-
-      mailText =
-          "Dobrý deň SRP, hliadky prosím odvolať.";
-    }
-
-    // 🚓 HLIADKY POTVRDIŤ
-    else if (req.body.service === "Hliadky potvrdené") {
-
-      mailSubject = "🚓 HLIADKY POTVRDENÉ";
-
-      mailText =
-          "Dobrý deň SRP, hliadky týmto potvrdzujem.";
-    }
-
-    // 🔧 KLASICKÝ SERVIS
-    else {
-
-      mailSubject = "🛠️ SERVIS";
-
-      mailText =
-          `Dobrý deň SRP, žiadam o servis: ${req.body.service}`;
-    }
-
-    await transporter.sendMail({
-
-      from: "vartik.martin@gmail.com",
-
-      to: "skuskaalarmy@gmail.com",
-
-      subject: mailSubject,
-
-      text: mailText
-    });
-
-    console.log("✅ SERVIS MAIL ODOSLANÝ");
-
-    res.send("OK");
-
-  } catch (error) {
-
-    console.error("❌ CHYBA SERVISU:", error);
 
     res.status(500).send("Chyba");
   }
