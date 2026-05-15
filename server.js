@@ -14,7 +14,7 @@ const app = express();
 
 // 🔥 FIREBASE TOKEN
 const firebaseToken =
-fdrcLLbeRPidktih1WLrPh:APA91bFYv1fbWEhOnj-WPICs35_9QRnsu5IAQygwrtmBroxkrzQPm2u5fTvraK5qSsNt2Ad32dCXzRQEVn-0uAao4gf1xh1l4fdwlaSsq9vlajIFIXlsdho
+"fdrcLLbeRPidktih1WLrPh:APA91bFYv1fbWEhOnj-WPICs35_9QRnsu5IAQygwrtmBroxkrzQPm2u5fTvraK5qSsNt2Ad32dCXzRQEVn-0uAao4gf1xh1l4fdwlaSsq9vlajIFIXlsdho";
 
 // 🔥 Middleware
 app.use(cors());
@@ -131,6 +131,7 @@ app.post("/service", async (req, res) => {
     let mailText = "";
     let mailSubject = "";
 
+    // 🚓 HLIADKY ODVOLAŤ
     if (req.body.service === "Hliadky odvolané") {
 
       mailSubject = "🚓 HLIADKY ODVOLANÉ";
@@ -139,6 +140,7 @@ app.post("/service", async (req, res) => {
           "Dobrý deň SRP, hliadky prosím odvolať.";
     }
 
+    // 🚓 HLIADKY POTVRDIŤ
     else if (req.body.service === "Hliadky potvrdené") {
 
       mailSubject = "🚓 HLIADKY POTVRDENÉ";
@@ -147,6 +149,7 @@ app.post("/service", async (req, res) => {
           "Dobrý deň SRP, hliadky týmto potvrdzujem.";
     }
 
+    // 🔧 KLASICKÝ SERVIS
     else {
 
       mailSubject = "🛠️ SERVIS";
