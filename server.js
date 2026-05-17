@@ -48,11 +48,15 @@ const transporter = nodemailer.createTransport({
 
 // 🔥 IMAP
 const imap = new Imap({
+const imap = new Imap({
   user: "skuskaalarmy@gmail.com",
   password: "hyps qflp tter eaut",
   host: "imap.gmail.com",
   port: 993,
-  tls: true
+  tls: true,
+  tlsOptions: {
+    rejectUnauthorized: false
+  }
 });
 
 function openInbox(cb) {
