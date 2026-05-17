@@ -182,6 +182,66 @@ app.get("/push-test", async (req, res) => {
   }
 });
 
+// 🔴 SERVIS + HLIADKY
+app.post("/service", async (req, res) => {
+
+  console.log("🛠️ SERVIS PRIŠIEL");
+
+  try {
+
+    let mailText = "";
+    let mailSubject = "";
+
+    // 🚓 HLIADKY ODVOLAŤ
+    if (req.body.service === "Hliadky odvolané") {
+
+      mailSubject = "🚓 HLIADKY ODVOLANÉ";
+
+      mailText =
+          "Dobrý deň SRP, hliadky prosím odvolať.";
+    }
+
+    // 🚓 HLIADKY POTVRDIŤ
+    else if (req.body.service === "Hliadky potvrdené") {
+
+      mailSubject = "🚓 HLIADKY POTVRDENÉ";
+
+      mailText =
+          "Dobrý deň SRP, hliadky týmto potvrdzujem.";
+    }
+
+    // 🔧 KLASICKÝ SERVIS
+    else {
+
+      mailSubject = "🛠️ SERVIS";
+
+      mailText =
+          `Dobrý deň SRP, žiadam o servis: ${req.body.service}`;
+    }
+
+    await transporter.sendMail({
+
+      from: "vartik.martin@gmail.com",
+
+      to: "skuskaalarmy@gmail.com",
+
+      subject: mailSubject,
+
+      text: mailText
+    });
+
+    console.log("✅ SERVIS MAIL ODOSLANÝ");
+
+    res.send("OK");
+
+  } catch (error) {
+
+    console.error("❌ CHYBA SERVISU:", error);
+
+    res.status(500).send("Chyba");
+  }
+});
+
 // 🚀 SERVER
 const PORT = process.env.PORT || 3000;
 
