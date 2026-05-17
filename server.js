@@ -23,7 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🔥 LOG KAŽDÉHO REQUESTU
+// 🔥 LOG
 app.use((req, res, next) => {
 
   console.log("=================================");
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🔥 MAIL
+// 🔥 GMAIL SMTP
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -46,7 +46,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// 🔥 GMAIL IMAP
+// 🔥 IMAP
 const imap = new Imap({
   user: "skuskaalarmy@gmail.com",
   password: "hyps qflp tter eaut",
@@ -69,4 +69,122 @@ imap.once("ready", () => {
 
     imap.on("mail", () => {
 
+      const fetch = imap.seq.fetch("*", {
+        bodies: ""
+      });
+
+      fetch.on("message", (msg) => {
+
+        msg.on("body", async (stream) => {
+
+          const parsed = await simpleParser(stream);
+
+          const subject = parsed.subject || "";
+          const from = parsed.from?.text || "";
+
+          console.log("📩 NOVÝ MAIL:");
+          console.log(subject);
+
+          // 🚨 DETEKCIA
+          if (
+            subject.toLowerCase().includes("testovaci objekt") ||
+            from.toLowerCase().includes("operacne@securiton.sk")
+          ) {
+
+            console.log("🚨 ALARM DETEKOVANÝ");
+
+            if (firebaseToken) {
+
+              try {
+
+                await admin.messaging().send({
+
+                  token: firebaseToken,
+
+                  notification: {
+                    title: "🚨 ALARM",
+                    body: subject || "Alarm prijatý"
+                  }
+                });
+
+                console.log("✅ PUSH ODOSLANÝ");
+
+              } catch (error) {
+
+                console.error("❌ PUSH CHYBA:", error);
+              }
+            }
+          }
+        });
+      });
+    });
+  });
+});
+
+imap.once("error", (err) => {
+  console.error("❌ IMAP CHYBA:", err);
+});
+
+imap.once("end", () => {
+  console.log("📪 IMAP UKONČENÝ");
+});
+
+imap.connect();
+
+// 🧪 TEST
+app.get("/", (req, res) => {
+
+  res.send("SERVER FUNGUJE");
+});
+
+// 🔥 REGISTER TOKEN
+app.post("/register-token", (req, res) => {
+
+  firebaseToken = req.body.token;
+
+  console.log("🔥 NOVÝ TOKEN:");
+  console.log(firebaseToken);
+
+  res.send("TOKEN ULOŽENÝ");
+});
+
+// 🔥 PUSH TEST
+app.get("/push-test", async (req, res) => {
+
+  try {
+
+    if (!firebaseToken) {
+      return res.status(400).send("TOKEN CHÝBA");
+    }
+
+    await admin.messaging().send({
+
+      token: firebaseToken,
+
+      notification: {
+        title: "🚨 TEST ALARM",
+        body: "Push notifikácia funguje"
+      }
+    });
+
+    console.log("✅ PUSH ODOSLANÝ");
+
+    res.send("PUSH OK");
+
+  } catch (error) {
+
+    console.error("❌ PUSH CHYBA:", error);
+
+    res.status(500).send("PUSH ERROR");
+  }
+});
+
+// 🚀 SERVER
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+
+  console.log("=================================");
+  console.log(`🚀 SERVER BEŽÍ NA PORTE ${PORT}`);
+  console.log("=================================");
 });
