@@ -4,6 +4,9 @@ const nodemailer = require("nodemailer");
 
 const admin = require("firebase-admin");
 
+const Imap = require("imap");
+const { simpleParser } = require("mailparser");
+
 const serviceAccount = require("./pco-alarmy-firebase-adminsdk-fbsvc-32ed50e6fe.json");
 
 admin.initializeApp({
@@ -43,107 +46,27 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// 🧪 TEST ROUTA
-app.get("/", (req, res) => {
-
-  console.log("TEST SERVER FUNGUJE");
-
-  res.send("SERVER FUNGUJE");
+// 🔥 GMAIL IMAP
+const imap = new Imap({
+  user: "skuskaalarmy@gmail.com",
+  password: "hyps qflp tter eaut",
+  host: "imap.gmail.com",
+  port: 993,
+  tls: true
 });
 
-// 🔥 REGISTER TOKEN
-app.post("/register-token", (req, res) => {
+function openInbox(cb) {
+  imap.openBox("INBOX", false, cb);
+}
 
-  firebaseToken = req.body.token;
+imap.once("ready", () => {
 
-  console.log("🔥 NOVÝ TOKEN:");
-  console.log(firebaseToken);
+  console.log("📬 IMAP PRIPOJENÝ");
 
-  res.send("TOKEN ULOŽENÝ");
-});
+  openInbox((err, box) => {
 
-// 🔥 PUSH TEST
-app.get("/push-test", async (req, res) => {
+    if (err) throw err;
 
-  try {
+    imap.on("mail", () => {
 
-    if (!firebaseToken) {
-
-      return res.status(400).send("TOKEN NIE JE NASTAVENÝ");
-    }
-
-    await admin.messaging().send({
-
-      token: firebaseToken,
-
-      notification: {
-        title: "🚨 TEST ALARM",
-        body: "Push notifikácia funguje"
-      }
-    });
-
-    console.log("✅ PUSH ODOSLANÝ");
-
-    res.send("PUSH OK");
-
-  } catch (error) {
-
-    console.error("❌ PUSH CHYBA:", error);
-
-    res.status(500).send("PUSH ERROR");
-  }
-});
-
-// 🔴 ALARM
-app.post("/alarm", async (req, res) => {
-
-  console.log("🚨 ALARM PRIŠIEL");
-
-  try {
-
-    if (firebaseToken) {
-
-      await admin.messaging().send({
-
-        token: firebaseToken,
-
-        notification: {
-          title: "🚨 ALARM",
-          body: "PIR vstup narušený!"
-        }
-      });
-    }
-
-    // 🔥 EMAIL
-    await transporter.sendMail({
-
-      from: "vartik.martin@gmail.com",
-
-      to: "skuskaalarmy@gmail.com",
-
-      subject: "🚨 ALARM",
-
-      text: "PIR vstup narušený!"
-    });
-
-    console.log("✅ MAIL AJ PUSH ODOSLANÝ");
-
-    res.send("OK");
-
-  } catch (error) {
-
-    console.error("❌ CHYBA ALARMU:", error);
-
-    res.status(500).send("Chyba");
-  }
-});
-
-// 🚀 SERVER
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, "0.0.0.0", () => {
-
-  console.log("=================================");
-  console.log(`🚀 SERVER BEŽÍ NA PORTE ${PORT}`);
-  console.log("=================================");
 });
