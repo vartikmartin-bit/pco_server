@@ -12,9 +12,8 @@ admin.initializeApp({
 
 const app = express();
 
-// 🔥 FIREBASE TOKEN
-const firebaseToken =
-"e5_EUifxQYWazxtBGQL4Ue:APA91bG2OUBlFEBCOsB61RSHMarF8Tie4Jq2BK5Ezu_x0iSZfkMJc8F_dZ2MO4be8rjbBgBmrkKw4oG9knZN3jLY2A_DyTh2-nX-tLO_jlZgMLLaqFe-BT";
+// 🔥 AKTUÁLNY FIREBASE TOKEN
+let firebaseToken = "";
 
 // 🔥 Middleware
 app.use(cors());
@@ -52,10 +51,26 @@ app.get("/", (req, res) => {
   res.send("SERVER FUNGUJE");
 });
 
+// 🔥 REGISTER TOKEN
+app.post("/register-token", (req, res) => {
+
+  firebaseToken = req.body.token;
+
+  console.log("🔥 NOVÝ TOKEN:");
+  console.log(firebaseToken);
+
+  res.send("TOKEN ULOŽENÝ");
+});
+
 // 🔥 PUSH TEST
 app.get("/push-test", async (req, res) => {
 
   try {
+
+    if (!firebaseToken) {
+
+      return res.status(400).send("TOKEN NIE JE NASTAVENÝ");
+    }
 
     await admin.messaging().send({
 
@@ -86,16 +101,18 @@ app.post("/alarm", async (req, res) => {
 
   try {
 
-    // 🔥 PUSH
-    await admin.messaging().send({
+    if (firebaseToken) {
 
-      token: firebaseToken,
+      await admin.messaging().send({
 
-      notification: {
-        title: "🚨 ALARM",
-        body: "PIR vstup narušený!"
-      }
-    });
+        token: firebaseToken,
+
+        notification: {
+          title: "🚨 ALARM",
+          body: "PIR vstup narušený!"
+        }
+      });
+    }
 
     // 🔥 EMAIL
     await transporter.sendMail({
