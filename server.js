@@ -18,6 +18,13 @@ const app = express();
 // 🔥 AKTUÁLNY FIREBASE TOKEN
 let firebaseToken = "";
 
+// 🚨 POSLEDNÝ ALARM
+let lastAlarm = {
+  object: "Žiadny alarm",
+  text: "",
+  time: ""
+};
+
 // 🔥 Middleware
 app.use(cors());
 app.use(express.json());
@@ -95,6 +102,13 @@ imap.once("ready", () => {
           ) {
 
             console.log("🚨 ALARM DETEKOVANÝ");
+
+            // 🚨 ULOŽENIE ALARMU
+            lastAlarm = {
+              object: subject,
+              text: "Alarm prijatý zo SIMS",
+              time: new Date().toLocaleString()
+            };
 
             if (firebaseToken) {
 
@@ -210,7 +224,7 @@ app.post("/service", async (req, res) => {
           "Dobrý deň SRP, hliadky týmto potvrdzujem.";
     }
 
-    // 🔧 KLASICKÝ SERVIS
+    // 🔧 SERVIS
     else {
 
       mailSubject = "🛠️ SERVIS";
@@ -240,6 +254,12 @@ app.post("/service", async (req, res) => {
 
     res.status(500).send("Chyba");
   }
+});
+
+// 🚨 POSLEDNÝ ALARM
+app.get("/last-alarm", (req, res) => {
+
+  res.json(lastAlarm);
 });
 
 // 🚀 SERVER
