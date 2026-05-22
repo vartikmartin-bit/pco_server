@@ -92,23 +92,21 @@ imap.once("ready", () => {
           const subject = parsed.subject || "";
           const from = parsed.from?.text || "";
 
-          console.log("📩 NOVÝ MAIL:");
-          console.log(subject);
+console.log("📩 NOVÝ MAIL:");
+console.log(subject);
 
-          // 🚨 DETEKCIA
-if (
-  subject.toLowerCase().includes("test") ||
-  from.toLowerCase().includes("operacne@securiton.sk")
-) {
+console.log(subject.toLowerCase());
+console.log(from.toLowerCase());
 
-            console.log("🚨 ALARM DETEKOVANÝ");
+if (true) {
 
-            // 🚨 ULOŽENIE ALARMU
-            lastAlarm = {
-              object: subject,
-              text: "Alarm prijatý zo SIMS",
-              time: new Date().toLocaleString()
-            };
+  console.log("🚨 ALARM DETEKOVANÝ");
+
+  lastAlarm = {
+    object: subject,
+    text: "Alarm prijatý zo SIMS",
+    time: new Date().toLocaleString()
+  };
 
             if (firebaseToken) {
 
