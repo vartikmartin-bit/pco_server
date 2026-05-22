@@ -96,10 +96,10 @@ imap.once("ready", () => {
           console.log(subject);
 
           // 🚨 DETEKCIA
-          if (
-            subject.toLowerCase().includes("testovaci objekt") ||
-            from.toLowerCase().includes("operacne@securiton.sk")
-          ) {
+if (
+  subject.toLowerCase().includes("test") ||
+  from.toLowerCase().includes("operacne@securiton.sk")
+) {
 
             console.log("🚨 ALARM DETEKOVANÝ");
 
