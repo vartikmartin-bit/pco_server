@@ -105,7 +105,9 @@ if (true) {
   lastAlarm = {
     object: subject,
     text: "Alarm prijatý zo SIMS",
-    time: new Date().toLocaleString()
+   time: new Date().toLocaleString("sk-SK", {
+  timeZone: "Europe/Bratislava"
+})
   };
 
             if (firebaseToken) {
