@@ -92,27 +92,35 @@ imap.once("ready", () => {
           const subject = parsed.subject || "";
           const from = parsed.from?.text || "";
 
-console.log("📩 NOVÝ MAIL:");
-console.log(subject);
+          console.log("📩 NOVÝ MAIL:");
+          console.log(subject);
 
-console.log(subject.toLowerCase());
-console.log(from.toLowerCase());
+          console.log(subject.toLowerCase());
+          console.log(from.toLowerCase());
 
-if (true) {
+          // 🚨 DETEKCIA ALARMU
+          if (true) {
 
-  console.log("🚨 ALARM DETEKOVANÝ");
+            console.log("🚨 ALARM DETEKOVANÝ");
 
-  lastAlarm = {
-    object: subject,
-    text: "Alarm prijatý zo SIMS",
-   time: new Date().toLocaleString("sk-SK", {
-  timeZone: "Europe/Bratislava"
-})
-  };
+            // 🚨 ULOŽENIE ALARMU
+            lastAlarm = {
+              object: subject,
+              text: "Alarm prijatý zo SIMS",
+              time: new Date().toLocaleString("sk-SK", {
+                timeZone: "Europe/Bratislava"
+              })
+            };
 
+            console.log("🔥 AKTUÁLNY TOKEN:");
+            console.log(firebaseToken);
+
+            // 🔥 PUSH
             if (firebaseToken) {
 
               try {
+
+                console.log("🔥 PUSH SA POKÚŠA ODOSLAŤ");
 
                 await admin.messaging().send({
 
@@ -129,7 +137,11 @@ if (true) {
               } catch (error) {
 
                 console.error("❌ PUSH CHYBA:", error);
+                console.log(firebaseToken);
               }
+            } else {
+
+              console.log("❌ TOKEN CHÝBA");
             }
           }
         });
@@ -138,17 +150,19 @@ if (true) {
   });
 });
 
+// ❌ IMAP CHYBA
 imap.once("error", (err) => {
   console.error("❌ IMAP CHYBA:", err);
 });
 
+// 📪 IMAP END
 imap.once("end", () => {
   console.log("📪 IMAP UKONČENÝ");
 });
 
 imap.connect();
 
-// 🧪 TEST
+// 🧪 TEST SERVER
 app.get("/", (req, res) => {
 
   res.send("SERVER FUNGUJE");
