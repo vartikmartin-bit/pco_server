@@ -151,13 +151,22 @@ imap.once("ready", () => {
 });
 
 // ❌ IMAP CHYBA
-imap.once("error", (err) => {
+imap.on("error", (err) => {
   console.error("❌ IMAP CHYBA:", err);
 });
 
 // 📪 IMAP END
-imap.once("end", () => {
+imap.on("end", () => {
+
   console.log("📪 IMAP UKONČENÝ");
+
+  setTimeout(() => {
+
+    console.log("🔄 IMAP RECONNECT");
+
+    imap.connect();
+
+  }, 5000);
 });
 
 imap.connect();
