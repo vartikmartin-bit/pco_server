@@ -1,2 +1,3 @@
-node_modules
-pco-alarmy-firebase-adminsdk-fbsvc-32ed50e6fe.json
+node_modules/
+.env
+pco-alarmy-firebase-adminsdk-*.json
